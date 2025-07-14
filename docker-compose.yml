@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # React Frontend
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api
+    networks:
+      - tuition-network
+
+  # NestJS Backend API
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+    networks:
+      - tuition-network
+
+networks:
+  tuition-network:
+    driver: bridge
